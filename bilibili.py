@@ -287,7 +287,7 @@ class Bilibili:
                                     self._log(f"登录验证码识别结果: {captcha}")
                                     key = get_key()
                                     key_hash, pub_key = key['key_hash'], key['pub_key']
-                                    url = f"{self.protocol}://passport.bilibili.com/api/v2/oauth2/login"
+                                    url = f"{self.protocol}://passport.bilibili.com/api/v3/oauth2/login"
                                     param = f"appkey={Bilibili.app_key}&captcha={captcha}&password={parse.quote_plus(base64.b64encode(rsa.encrypt(f'{key_hash}{self.password}'.encode(), pub_key)))}&username={parse.quote_plus(self.username)}"
                                     payload = f"{param}&sign={self.calc_sign(param)}"
                                     headers = {'Content-type': "application/x-www-form-urlencoded"}
