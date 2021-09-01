@@ -278,25 +278,6 @@ class Bilibili:
                             payload = f"{param}&sign={self.calc_sign(param)}"
                             headers = {'Content-type': "application/x-www-form-urlencoded"}
                             response = self._requests("post", url, data=payload, headers=headers)
-                            if response['code'] == 0:
-                                url = f"{self.protocol}://passport.bilibili.com/captcha"
-                                headers = {'Host': "passport.bilibili.com"}
-                                response = self._requests("get", url, headers=headers, decode_level=1)
-                                captcha = self._solve_captcha(response)
-                                if captcha:
-                                    self._log(f"登录验证码识别结果: {captcha}")
-                                    key = get_key()
-                                    key_hash, pub_key = key['key_hash'], key['pub_key']
-                                    url = f"{self.protocol}://passport.bilibili.com/api/v3/oauth2/login"
-                                    param = f"appkey={Bilibili.app_key}&captcha={captcha}&password={parse.quote_plus(base64.b64encode(rsa.encrypt(f'{key_hash}{self.password}'.encode(), pub_key)))}&username={parse.quote_plus(self.username)}"
-                                    payload = f"{param}&sign={self.calc_sign(param)}"
-                                    headers = {'Content-type': "application/x-www-form-urlencoded"}
-                                    response = self._requests("post", url, data=payload, headers=headers)
-                                else:
-                                    self._log(f"登录验证码识别服务暂时不可用, {'尝试更换代理' if self.proxy else '10秒后重试'}")
-                                    if not self.set_proxy():
-                                        time.sleep(10)
-                                    break
                         elif response['code'] == 0 and response['data']['status'] == 0:
                             for cookie in response['data']['cookie_info']['cookies']:
                                 self._session.cookies.set(cookie['name'], cookie['value'], domain=".bilibili.com")
